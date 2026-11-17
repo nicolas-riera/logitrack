@@ -19,28 +19,3 @@
     font-size: 1.25rem;
     font-weight: 700;
 }
-
-#sidebar-toggle {
-    background: none;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.4rem 0.65rem;
-    cursor: pointer;
-    font-size: 1.1rem;
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    color: #ffffff;
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background-color 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}

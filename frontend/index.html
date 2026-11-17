@@ -19,7 +19,10 @@
 
     <aside class="app-sidebar" id="app-sidebar">
         <nav aria-label="Main Navigation" class="mobile-nav">
-            <button id="mobile-nav-toggle" class="mobile-nav-toggle">Dashboard ▾</button>
+            <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-expanded="false" aria-controls="nav-list">
+                <span>Dashboard</span>
+                <span class="chevron" aria-hidden="true">▾</span>
+            </button>
             <ul id="nav-list">
                 <li><a href="#" class="active">Dashboard</a></li>
             </ul>
@@ -29,41 +32,69 @@
     <main class="app-main">
         <section class="filter-bar" aria-label="Filters and Search">
 
-            <div class="filter-group desktop-filters">  <!-- Desktop -->
-                <button class="filter-btn active" data-status="ALL">All</button>
-                <button class="filter-btn" data-status="IN_TRANSIT">In Transit</button>
-                <button class="filter-btn" data-status="DELIVERED">Delivered</button>
-                <button class="filter-btn" data-status="DELAYED">Delayed</button>
-                <button class="filter-btn" data-status="PENDING">Pending</button>
-            </div>
-            
-            <div class="filter-group mobile-filters-dropdown"> <!-- Mobile -->
-                <select id="mobile-status-select" aria-label="Filter by Status">
-                    <option value="ALL">All Statuses</option>
-                    <option value="IN_TRANSIT">In Transit</option>
-                    <option value="DELIVERED">Delivered</option>
-                    <option value="DELAYED">Delayed</option>
-                    <option value="PENDING">Pending</option>
-                </select>
-            </div>
-
-            <div class="filter-right-actions">
+            <div class="toolbar">
                 <div class="search-box">
                     <input type="search" id="search-input" placeholder="Search" aria-label="Search shipment">
                 </div>
-                <button id="btn-new-shipment" class="btn-primary">+ New Shipment</button>
+                <button id="filters-toggle" class="filters-toggle" aria-expanded="false" aria-controls="filters-panel">
+                    <span>Filters</span>
+                    <span id="filters-count" class="filters-count" hidden></span>
+                    <span class="chevron" aria-hidden="true">▾</span>
+                </button>
+                <div class="toolbar-actions">
+                    <button id="btn-reset-data" class="btn-secondary">Reset Data</button>
+                    <button id="btn-new-shipment" class="btn-primary">+ New Shipment</button>
+                </div>
+            </div>
+
+            <div id="filters-panel" class="filters-panel">
+                <div class="dropdown" data-filter="status">
+                    <button type="button" class="dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                        <span class="filter-label">Status</span>
+                        <span class="dropdown-value">All</span>
+                        <span class="chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="dropdown-menu" role="menu">
+                        <button type="button" class="dropdown-option active" role="menuitemradio" aria-checked="true" data-value="ALL">All</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="IN_TRANSIT">In Transit</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="DELIVERED">Delivered</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="DELAYED">Delayed</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="PENDING">Pending</button>
+                    </div>
+                </div>
+
+                <div class="dropdown" data-filter="carrier">
+                    <button type="button" class="dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                        <span class="filter-label">Carrier</span>
+                        <span class="dropdown-value">All</span>
+                        <span class="chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="dropdown-menu" role="menu">
+                        <button type="button" class="dropdown-option active" role="menuitemradio" aria-checked="true" data-value="ALL">All</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="DHL">DHL</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="Chronopost">Chronopost</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="FedEx">FedEx</button>
+                        <button type="button" class="dropdown-option" role="menuitemradio" aria-checked="false" data-value="UPS">UPS</button>
+                    </div>
+                </div>
+
+                <label class="priority-toggle">
+                    <input type="checkbox" id="priority-only">
+                    <span>Priority only</span>
+                </label>
             </div>
         </section>
 
         <section class="shipments-section" aria-label="Shipment List">
             <div id="network-state" class="network-state hidden"></div>
 
-            <div class="list-header" aria-hidden="true">
-                <span class="sortable" data-sort="id">ID ↕</span>
-                <span class="sortable" data-sort="recipient">Recipient ↕</span>
-                <span class="sortable" data-sort="destinationCity">City ↕</span>
-                <span class="sortable" data-sort="status">Status ↕</span>
-                <span class="sortable" data-sort="estimatedDelivery">Estimated Delivery ↕</span>
+            <div class="list-header">
+                <button class="sortable" data-sort="trackingNumber">ID</button>
+                <button class="sortable" data-sort="recipient">Recipient</button>
+                <button class="sortable" data-sort="destinationCity">City</button>
+                <button class="sortable" data-sort="carrier">Carrier</button>
+                <button class="sortable" data-sort="status">Status</button>
+                <button class="sortable" data-sort="estimatedDelivery">Estimated Delivery</button>
             </div>
 
             <ul id="shipments-list" class="shipments-list"></ul>
@@ -71,13 +102,11 @@
         </section>
     </main>
 
-    <dialog id="shipment-dialog" class="app-dialog">
+    <dialog id="shipment-dialog" class="app-dialog" aria-labelledby="dialog-title">
         <div class="dialog-content">
             <header class="dialog-header">
-                <h2 id="dialog-title">Shipment Details</h2>
-                <form method="dialog">
-                    <button class="btn-close" aria-label="Close">✕</button>
-                </form>
+                <h2 id="dialog-title"></h2>
+                <button type="button" class="btn-close" id="dialog-close" aria-label="Close">✕</button>
             </header>
             <div id="dialog-body" class="dialog-body"></div>
         </div>
@@ -88,9 +117,60 @@
             <span class="shipment-id"></span>
             <span class="shipment-recipient"></span>
             <span class="shipment-city"></span>
+            <span class="shipment-carrier"></span>
             <span class="shipment-status"><span class="badge"></span></span>
             <span class="shipment-date"></span>
         </li>
+    </template>
+
+    <template id="shipment-form-template">
+        <form class="shipment-form" novalidate>
+            <div class="form-grid">
+                <label class="form-field">
+                    <span>Recipient</span>
+                    <input type="text" name="recipient" required autocomplete="off">
+                </label>
+                <label class="form-field">
+                    <span>Destination City</span>
+                    <input type="text" name="destinationCity" required autocomplete="off">
+                </label>
+                <label class="form-field">
+                    <span>Carrier</span>
+                    <select name="carrier" required>
+                        <option value="DHL">DHL</option>
+                        <option value="Chronopost">Chronopost</option>
+                        <option value="FedEx">FedEx</option>
+                        <option value="UPS">UPS</option>
+                    </select>
+                </label>
+                <label class="form-field">
+                    <span>Status</span>
+                    <select name="status">
+                        <option value="PENDING">Pending</option>
+                        <option value="IN_TRANSIT">In Transit</option>
+                        <option value="DELIVERED">Delivered</option>
+                        <option value="DELAYED">Delayed</option>
+                    </select>
+                </label>
+                <label class="form-field">
+                    <span>Estimated Delivery</span>
+                    <input type="date" name="estimatedDelivery">
+                </label>
+                <label class="form-check">
+                    <input type="checkbox" name="isPriority">
+                    <span>Priority shipment</span>
+                </label>
+                <label class="form-field form-field-full">
+                    <span>Internal Notes</span>
+                    <textarea name="internalNotes" rows="3"></textarea>
+                </label>
+            </div>
+            <p class="form-error" hidden></p>
+            <div class="dialog-actions">
+                <button type="button" class="btn-secondary" data-action="cancel">Cancel</button>
+                <button type="submit" class="btn-primary" data-action="submit">Save</button>
+            </div>
+        </form>
     </template>
 
 </body>

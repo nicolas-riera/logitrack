@@ -4,7 +4,6 @@
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: 1rem;
-    overflow: hidden;
 }
 
 .app-sidebar ul {
@@ -19,28 +18,38 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1rem;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     text-decoration: none;
     color: var(--text-muted);
     font-weight: 500;
-    transition: all 0.2s;
+    transition: background-color 0.2s, color 0.2s;
 }
 
 .app-sidebar a:hover,
 .app-sidebar a.active {
-    background-color: #eff6ff;
+    background-color: var(--primary-soft);
     color: var(--primary);
 }
 
 .mobile-nav-toggle {
     display: none;
     width: 100%;
-    background: #eff6ff;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--primary-soft);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
     font-weight: 600;
     color: var(--primary);
     cursor: pointer;
-    text-align: left;
+}
+
+.chevron {
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+[aria-expanded="true"] > .chevron {
+    transform: rotate(180deg);
 }

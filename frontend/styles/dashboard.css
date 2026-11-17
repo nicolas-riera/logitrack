@@ -4,66 +4,194 @@
     flex-direction: column;
     gap: 1rem;
     min-width: 0;
-    height: calc(100vh - 100px);
+    min-height: 0;
 }
 
 .filter-bar {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1rem;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.75rem;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
 }
 
-.filter-group {
+.toolbar {
+    order: 1;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.toolbar-actions {
+    display: flex;
     gap: 0.5rem;
 }
 
-.mobile-filters-dropdown {
-    display: none;
-}
-
-.filter-right-actions {
+.filters-panel {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
-.filter-btn {
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.8rem;
     background: var(--bg-app);
     border: 1px solid transparent;
-    border-radius: var(--radius-pill);
-    padding: 0.45rem 1rem;
+    border-radius: var(--radius-md);
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.filter-btn:hover {
-    border-color: var(--border-color);
     color: var(--text-main);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s, background-color 0.2s;
 }
 
-.filter-btn.active {
+.dropdown-toggle:hover,
+.dropdown.open .dropdown-toggle {
+    border-color: var(--border-color);
+}
+
+.dropdown.has-value .dropdown-toggle {
     background: var(--text-main);
     color: #ffffff;
 }
 
-.search-box input {
-    padding: 0.55rem 1.2rem;
+.dropdown.has-value .filter-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.dropdown .chevron {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    min-width: 100%;
+    padding: 0.35rem;
+    background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    z-index: 30;
+}
+
+.dropdown.open .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown.open .chevron {
+    transform: rotate(180deg);
+}
+
+.dropdown-option {
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    text-align: left;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.dropdown-option:hover {
+    background: var(--bg-app);
+}
+
+.dropdown-option.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.priority-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.8rem;
+    white-space: nowrap;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.priority-toggle input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--priority);
+    cursor: pointer;
+}
+
+.priority-toggle:has(input:checked) {
+    border-color: var(--priority);
+    color: var(--priority);
+}
+
+.filters-toggle {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.filters-toggle .chevron {
+    margin-left: auto;
+}
+
+.filters-count {
+    min-width: 1.25rem;
+    padding: 0 0.35rem;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+    text-align: center;
+}
+
+.search-box input {
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     font-size: 0.9rem;
-    min-width: 240px;
+    width: 220px;
     outline: none;
 }
 
@@ -79,30 +207,56 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
-.list-header {
+.list-header,
+.shipment-card {
     display: grid;
-    grid-template-columns: 1fr 1.5fr 1.2fr 1.2fr 1.2fr;
+    grid-template-columns: 1.1fr 1.5fr 1.2fr 1fr 1.1fr 1.2fr;
     align-items: center;
-    padding: 0.9rem 1.5rem;
     gap: 1rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--text-muted);
+    padding: 0.9rem 1.5rem;
+}
+
+.list-header {
     flex-shrink: 0;
     border-bottom: 1px solid var(--border-color);
 }
 
 .list-header .sortable {
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
     cursor: pointer;
     user-select: none;
     transition: color 0.2s;
 }
 
-.list-header .sortable:hover {
+.list-header .sortable::after {
+    content: " ↕";
+    opacity: 0.5;
+}
+
+.list-header .sortable.sort-asc::after {
+    content: " ↑";
+    opacity: 1;
+}
+
+.list-header .sortable.sort-desc::after {
+    content: " ↓";
+    opacity: 1;
+}
+
+.list-header .sortable:hover,
+.list-header .sortable.sort-asc,
+.list-header .sortable.sort-desc {
     color: var(--primary);
 }
 
@@ -110,27 +264,21 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
     overflow-y: auto;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
     flex-grow: 1;
 }
 
 .shipment-card {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 1.2fr 1.2fr 1.2fr;
-    align-items: center;
-    padding: 0.9rem 1.5rem;
-    gap: 1rem;
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    transition: box-shadow 0.15s, border-color 0.15s;
 }
 
 .shipment-card:hover {
-    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     border-color: var(--primary);
 }
@@ -139,13 +287,22 @@
     font-weight: 700;
 }
 
+.shipment-card.is-priority .shipment-id {
+    color: var(--priority);
+}
+
+.shipment-carrier {
+    color: var(--text-muted);
+}
+
 .badge {
     display: inline-block;
-    padding: 0.3rem 0.75rem;
-    border-radius: var(--radius-pill);
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-sm);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.03em;
+    white-space: nowrap;
 }
 
 .status-in-transit {
@@ -199,40 +356,80 @@
     text-align: center;
     padding: 2rem;
     color: var(--text-muted);
-    grid-column: 1 / -1;
     list-style: none;
 }
 
+@media (max-width: 1250px) {
+    .toolbar-actions .btn-secondary,
+    .toolbar-actions .btn-primary {
+        padding: 0.6rem 0.9rem;
+    }
+
+    .search-box input {
+        width: 160px;
+    }
+}
+
 @media (max-width: 900px) {
-    .desktop-filters {
-        display: none;
-    }
-
-    .mobile-filters-dropdown {
-        display: block;
-        width: 100%;
-    }
-
-    .mobile-filters-dropdown select {
-        width: 100%;
-        padding: 0.6rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-pill);
-        background: var(--bg-app);
-        font-size: 0.9rem;
-        outline: none;
-    }
-
-    .filter-right-actions {
-        width: 100%;
-        flex-direction: column;
+    .filter-bar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.75rem;
+        padding: 1rem;
     }
 
-    .search-box,
-    .search-box input,
-    #btn-new-shipment {
+    .toolbar,
+    .toolbar-actions {
+        display: contents;
+    }
+
+    .search-box {
+        order: 1;
+        grid-column: 1 / -1;
+    }
+
+    .search-box input {
         width: 100%;
+    }
+
+    .filters-toggle {
+        display: flex;
+        order: 2;
+        grid-column: 1 / -1;
+    }
+
+    .filters-panel {
+        display: none;
+        order: 3;
+        grid-column: 1 / -1;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .filters-panel.open {
+        display: flex;
+    }
+
+    .dropdown-toggle {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+    }
+
+    .dropdown .chevron {
+        margin-left: auto;
+    }
+
+    .priority-toggle {
+        padding: 0.6rem 0.9rem;
+    }
+
+    #btn-reset-data {
+        order: 4;
+    }
+
+    #btn-new-shipment {
+        order: 5;
     }
 
     .app-main {
@@ -241,11 +438,12 @@
 
     .shipments-section {
         overflow: visible;
-        height: auto;
+        padding: 1rem;
     }
 
     .shipments-list {
         overflow-y: visible;
+        padding: 0;
     }
 
     .list-header {
@@ -253,18 +451,19 @@
     }
 
     .shipment-card {
-        border-radius: var(--radius-lg);
-        grid-template-columns: 1fr 1fr auto;
+        grid-template-columns: minmax(0, 1fr) auto;
         grid-template-areas:
-            "id date status"
-            "recipient city city";
-        gap: 0.6rem;
-        padding: 1.1rem 1.25rem;
+            "id status"
+            "recipient city"
+            "carrier date";
+        gap: 0.5rem 1rem;
+        padding: 1rem 1.1rem;
     }
 
     .shipment-id { grid-area: id; }
-    .shipment-date { grid-area: date; color: var(--text-muted); font-size: 0.85rem; }
     .shipment-status { grid-area: status; text-align: right; }
     .shipment-recipient { grid-area: recipient; font-weight: 600; }
     .shipment-city { grid-area: city; text-align: right; color: var(--text-muted); }
+    .shipment-carrier { grid-area: carrier; font-size: 0.85rem; }
+    .shipment-date { grid-area: date; text-align: right; color: var(--text-muted); font-size: 0.85rem; }
 }

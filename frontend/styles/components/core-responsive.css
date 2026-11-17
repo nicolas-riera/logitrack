@@ -5,26 +5,36 @@
     }
 
     body {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
         grid-template-areas:
             "header"
             "sidebar"
             "main";
-        height: auto;
+        min-height: 100vh;
     }
 
     .app-sidebar {
-        height: auto;
+        position: relative;
+        z-index: 20;
+        padding: 0.5rem;
     }
 
     .mobile-nav-toggle {
-        display: block;
+        display: flex;
     }
 
     .app-sidebar ul {
         display: none;
-        margin-top: 0.5rem;
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        right: 0;
+        padding: 0.5rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
     }
 
     .app-sidebar.expanded ul {

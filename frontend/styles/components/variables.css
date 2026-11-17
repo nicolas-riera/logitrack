@@ -6,8 +6,13 @@
     --text-muted: #64748b;
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
-    --radius-lg: 16px;
-    --radius-pill: 999px;
+    --primary-soft: #eff6ff;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --priority: #dc2626;
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 6px;
 
     --status-transit-bg: #dbeafe;
     --status-transit-text: #1e40af;

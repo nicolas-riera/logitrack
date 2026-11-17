@@ -8,3 +8,15 @@ html, body {
     height: 100vh;
     overflow: hidden;
 }
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+[hidden] {
+    display: none !important;
+}

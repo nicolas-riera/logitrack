@@ -3,31 +3,11 @@ body {
     background-color: var(--bg-app);
     color: var(--text-main);
     display: grid;
-    grid-template-columns: 240px 1fr;
-    grid-template-rows: 70px 1fr;
+    grid-template-columns: 240px minmax(0, 1fr);
+    grid-template-rows: 70px minmax(0, 1fr);
     grid-template-areas:
         "header header"
         "sidebar main";
     gap: 1rem;
     padding: 1rem;
-    transition: grid-template-columns 0.3s ease;
-}
-
-body.sidebar-collapsed {
-    grid-template-columns: 70px 1fr;
-}
-
-body.sidebar-collapsed .app-sidebar span,
-body.sidebar-collapsed .app-sidebar a span,
-body.sidebar-collapsed .mobile-nav-toggle {
-    display: none;
-}
-
-body.sidebar-collapsed .app-sidebar ul {
-    align-items: center;
-}
-
-body.sidebar-collapsed .app-sidebar a {
-    justify-content: center;
-    padding: 0.75rem;
 }
