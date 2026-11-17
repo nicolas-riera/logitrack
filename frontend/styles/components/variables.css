@@ -1,0 +1,20 @@
+:root {
+    --bg-app: #f4f6f9;
+    --bg-surface: #ffffff;
+    --border-color: #dde2e8;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    --status-transit-bg: #dbeafe;
+    --status-transit-text: #1e40af;
+    --status-delivered-bg: #dcfce7;
+    --status-delivered-text: #166534;
+    --status-delayed-bg: #fee2e2;
+    --status-delayed-text: #991b1b;
+    --status-pending-bg: #ffedd5;
+    --status-pending-text: #9a3412;
+}

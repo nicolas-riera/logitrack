@@ -1,0 +1,46 @@
+.app-sidebar {
+    grid-area: sidebar;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    overflow: hidden;
+}
+
+.app-sidebar ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.app-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.app-sidebar a:hover,
+.app-sidebar a.active {
+    background-color: #eff6ff;
+    color: var(--primary);
+}
+
+.mobile-nav-toggle {
+    display: none;
+    width: 100%;
+    background: #eff6ff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    cursor: pointer;
+    text-align: left;
+}

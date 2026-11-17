@@ -1,0 +1,33 @@
+@media (max-width: 900px) {
+    html, body {
+        height: auto;
+        overflow: auto;
+    }
+
+    body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto 1fr;
+        grid-template-areas:
+            "header"
+            "sidebar"
+            "main";
+        height: auto;
+    }
+
+    .app-sidebar {
+        height: auto;
+    }
+
+    .mobile-nav-toggle {
+        display: block;
+    }
+
+    .app-sidebar ul {
+        display: none;
+        margin-top: 0.5rem;
+    }
+
+    .app-sidebar.expanded ul {
+        display: flex;
+    }
+}

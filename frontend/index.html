@@ -4,39 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiTrack</title>
-    <link rel="stylesheet" href="styles/styles.css">
+
+    <link rel="stylesheet" href="styles/core.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <script type="module" src="src/app.js"></script>
 </head>
 <body>
 
     <header class="app-header">
         <div class="header-brand">
-            <button id="sidebar-toggle" aria-label="Toggle Menu">☰</button>
             <h1>LogiTrack</h1>
-        </div>
-        <div class="header-actions">
-            <button id="btn-new-shipment" class="btn-primary">+ New Shipment</button>
         </div>
     </header>
 
-    <aside class="app-sidebar"> <!-- Collapsable sidebar on Desktop, Menu on Mobile -->
-        <nav aria-label="Main Navigation">
-            <ul>
+    <aside class="app-sidebar" id="app-sidebar">
+        <nav aria-label="Main Navigation" class="mobile-nav">
+            <button id="mobile-nav-toggle" class="mobile-nav-toggle">Dashboard ▾</button>
+            <ul id="nav-list">
                 <li><a href="#" class="active">Dashboard</a></li>
             </ul>
         </nav>
     </aside>
-    
+
     <main class="app-main">
         <section class="filter-bar" aria-label="Filters and Search">
-            <div class="filter-group">
+
+            <div class="filter-group desktop-filters">  <!-- Desktop -->
                 <button class="filter-btn active" data-status="ALL">All</button>
                 <button class="filter-btn" data-status="IN_TRANSIT">In Transit</button>
                 <button class="filter-btn" data-status="DELIVERED">Delivered</button>
                 <button class="filter-btn" data-status="DELAYED">Delayed</button>
                 <button class="filter-btn" data-status="PENDING">Pending</button>
             </div>
-            <div class="search-box">
-                <input type="search" id="search-input" placeholder="Search ID, recipient, city..." aria-label="Search shipment">
+            
+            <div class="filter-group mobile-filters-dropdown"> <!-- Mobile -->
+                <select id="mobile-status-select" aria-label="Filter by Status">
+                    <option value="ALL">All Statuses</option>
+                    <option value="IN_TRANSIT">In Transit</option>
+                    <option value="DELIVERED">Delivered</option>
+                    <option value="DELAYED">Delayed</option>
+                    <option value="PENDING">Pending</option>
+                </select>
+            </div>
+
+            <div class="filter-right-actions">
+                <div class="search-box">
+                    <input type="search" id="search-input" placeholder="Search" aria-label="Search shipment">
+                </div>
+                <button id="btn-new-shipment" class="btn-primary">+ New Shipment</button>
             </div>
         </section>
 
@@ -44,43 +59,15 @@
             <div id="network-state" class="network-state hidden"></div>
 
             <div class="list-header" aria-hidden="true">
-                <span>ID</span>
-                <span>Recipient</span>
-                <span>City</span>
-                <span>Status</span>
-                <span>Estimated Delivery</span>
+                <span class="sortable" data-sort="id">ID ↕</span>
+                <span class="sortable" data-sort="recipient">Recipient ↕</span>
+                <span class="sortable" data-sort="destinationCity">City ↕</span>
+                <span class="sortable" data-sort="status">Status ↕</span>
+                <span class="sortable" data-sort="estimatedDelivery">Estimated Delivery ↕</span>
             </div>
 
-            <ul id="shipments-list" class="shipments-list">
-                <li class="shipment-card">
-                    <span class="shipment-id">#TRK-8492</span>
-                    <span class="shipment-recipient">John Doe</span>
-                    <span class="shipment-city">Marseille</span>
-                    <span class="shipment-status"><span class="badge status-in-transit">IN_TRANSIT</span></span>
-                    <span class="shipment-date">Nov 19, 2026</span>
-                </li>
-                <li class="shipment-card">
-                    <span class="shipment-id">#TRK-8491</span>
-                    <span class="shipment-recipient">Jane Smith</span>
-                    <span class="shipment-city">Lyon</span>
-                    <span class="shipment-status"><span class="badge status-delivered">DELIVERED</span></span>
-                    <span class="shipment-date">Nov 16, 2026</span>
-                </li>
-                <li class="shipment-card">
-                    <span class="shipment-id">#TRK-8490</span>
-                    <span class="shipment-recipient">Lucas Martin</span>
-                    <span class="shipment-city">Paris</span>
-                    <span class="shipment-status"><span class="badge status-delayed">DELAYED</span></span>
-                    <span class="shipment-date">Nov 15, 2026</span>
-                </li>
-                <li class="shipment-card">
-                    <span class="shipment-id">#TRK-8489</span>
-                    <span class="shipment-recipient">Sophie Bernard</span>
-                    <span class="shipment-city">Bordeaux</span>
-                    <span class="shipment-status"><span class="badge status-pending">PENDING</span></span>
-                    <span class="shipment-date">Nov 22, 2026</span>
-                </li>
-            </ul>
+            <ul id="shipments-list" class="shipments-list"></ul>
+
         </section>
     </main>
 
