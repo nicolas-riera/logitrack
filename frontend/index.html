@@ -4,8 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiTrack</title>
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
+
+    <header class="app-header">
+        <div class="header-brand">
+            <button id="sidebar-toggle" aria-label="Toggle Menu">☰</button>
+            <h1>LogiTrack</h1>
+        </div>
+        <div class="header-actions">
+            <button id="btn-new-shipment" class="btn-primary">+ New Shipment</button>
+        </div>
+    </header>
+
+    <aside class="app-sidebar"> <!-- Collapsable sidebar on Desktop, Menu on Mobile -->
+        <nav aria-label="Main Navigation">
+            <ul>
+                <li><a href="#" class="active">Dashboard</a></li>
+            </ul>
+        </nav>
+    </aside>
     
+    <main class="app-main">
+        <section class="filter-bar" aria-label="Filters and Search">
+            <div class="filter-group">
+                <button class="filter-btn active" data-status="ALL">All</button>
+                <button class="filter-btn" data-status="IN_TRANSIT">In Transit</button>
+                <button class="filter-btn" data-status="DELIVERED">Delivered</button>
+                <button class="filter-btn" data-status="DELAYED">Delayed</button>
+                <button class="filter-btn" data-status="PENDING">Pending</button>
+            </div>
+            <div class="search-box">
+                <input type="search" id="search-input" placeholder="Search ID, recipient, city..." aria-label="Search shipment">
+            </div>
+        </section>
+
+        <section class="shipments-section" aria-label="Shipment List">
+            <div id="network-state" class="network-state hidden"></div>
+
+            <div class="list-header" aria-hidden="true">
+                <span>ID</span>
+                <span>Recipient</span>
+                <span>City</span>
+                <span>Status</span>
+                <span>Estimated Delivery</span>
+            </div>
+
+            <ul id="shipments-list" class="shipments-list">
+                <li class="shipment-card">
+                    <span class="shipment-id">#TRK-8492</span>
+                    <span class="shipment-recipient">John Doe</span>
+                    <span class="shipment-city">Marseille</span>
+                    <span class="shipment-status"><span class="badge status-in-transit">IN_TRANSIT</span></span>
+                    <span class="shipment-date">Nov 19, 2026</span>
+                </li>
+                <li class="shipment-card">
+                    <span class="shipment-id">#TRK-8491</span>
+                    <span class="shipment-recipient">Jane Smith</span>
+                    <span class="shipment-city">Lyon</span>
+                    <span class="shipment-status"><span class="badge status-delivered">DELIVERED</span></span>
+                    <span class="shipment-date">Nov 16, 2026</span>
+                </li>
+                <li class="shipment-card">
+                    <span class="shipment-id">#TRK-8490</span>
+                    <span class="shipment-recipient">Lucas Martin</span>
+                    <span class="shipment-city">Paris</span>
+                    <span class="shipment-status"><span class="badge status-delayed">DELAYED</span></span>
+                    <span class="shipment-date">Nov 15, 2026</span>
+                </li>
+                <li class="shipment-card">
+                    <span class="shipment-id">#TRK-8489</span>
+                    <span class="shipment-recipient">Sophie Bernard</span>
+                    <span class="shipment-city">Bordeaux</span>
+                    <span class="shipment-status"><span class="badge status-pending">PENDING</span></span>
+                    <span class="shipment-date">Nov 22, 2026</span>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <dialog id="shipment-dialog" class="app-dialog">
+        <div class="dialog-content">
+            <header class="dialog-header">
+                <h2 id="dialog-title">Shipment Details</h2>
+                <form method="dialog">
+                    <button class="btn-close" aria-label="Close">✕</button>
+                </form>
+            </header>
+            <div id="dialog-body" class="dialog-body"></div>
+        </div>
+    </dialog>
+
+    <template id="shipment-template">
+        <li class="shipment-card">
+            <span class="shipment-id"></span>
+            <span class="shipment-recipient"></span>
+            <span class="shipment-city"></span>
+            <span class="shipment-status"><span class="badge"></span></span>
+            <span class="shipment-date"></span>
+        </li>
+    </template>
+
 </body>
 </html>
