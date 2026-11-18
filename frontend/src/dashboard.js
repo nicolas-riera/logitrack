@@ -16,6 +16,7 @@ const filtersCount = document.getElementById('filters-count');
 const sortHeaders = document.querySelectorAll('.list-header .sortable');
 
 const FILTERS_STORAGE_KEY = 'logitrack.filters';
+const SORT_STORAGE_KEY = 'logitrack.sort';
 
 let allShipments = [];
 const filters = { status: 'ALL', carrier: 'ALL', priorityOnly: false };
@@ -100,25 +101,26 @@ function renderShipments() {
     shipmentsList.appendChild(fragment);
 }
 
-function saveFilters() {
+function saveToStorage(key, value) {
     try {
-        localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+        localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-        console.warn('Unable to save filters', error);
+        console.warn(`Unable to save ${key}`, error);
     }
 }
 
-function readSavedFilters() {
+function readFromStorage(key) {
     try {
-        return JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY));
+        const value = JSON.parse(localStorage.getItem(key));
+        return value && typeof value === 'object' ? value : null;
     } catch {
         return null;
     }
 }
 
 function restoreFilters() {
-    const saved = readSavedFilters();
-    if (!saved || typeof saved !== 'object') return;
+    const saved = readFromStorage(FILTERS_STORAGE_KEY);
+    if (!saved) return;
 
     ['status', 'carrier'].forEach(key => {
         if (typeof saved[key] === 'string' && setDropdownValue(key, saved[key])) {
@@ -131,8 +133,17 @@ function restoreFilters() {
     updateFiltersCount();
 }
 
+function restoreSort() {
+    const saved = readFromStorage(SORT_STORAGE_KEY);
+    const isKnownColumn = [...sortHeaders].some(header => header.dataset.sort === saved?.column);
+    if (!isKnownColumn) return;
+
+    currentSort = { column: saved.column, ascending: saved.ascending !== false };
+    updateSortHeaders();
+}
+
 function applyFilters() {
-    saveFilters();
+    saveToStorage(FILTERS_STORAGE_KEY, filters);
     updateFiltersCount();
     renderShipments();
 }
@@ -181,6 +192,7 @@ function sortBy(column) {
     } else {
         currentSort = { column, ascending: true };
     }
+    saveToStorage(SORT_STORAGE_KEY, currentSort);
     updateSortHeaders();
     renderShipments();
 }
@@ -256,5 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initShipmentModal({ onCreate: handleCreate, onUpdate: handleUpdate, onReset: handleReset });
     bindDashboardEvents();
     restoreFilters();
+    restoreSort();
     loadDashboardData();
 });
