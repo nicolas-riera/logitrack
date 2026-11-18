@@ -5,17 +5,15 @@ import { initDropdowns } from './components/dropdown.js';
 import { initShipmentModal, openShipmentDetails, openShipmentForm, openResetConfirm } from './components/shipmentModal.js';
 import { showLoading, showError, hideNetworkState } from './components/networkState.js';
 
+const appMain = document.querySelector('.app-main');
 const shipmentsList = document.getElementById('shipments-list');
 const shipmentTemplate = document.getElementById('shipment-template');
 const searchInput = document.getElementById('search-input');
-const filterDropdowns = document.querySelectorAll('.dropdown[data-filter]');
 const priorityOnlyCheckbox = document.getElementById('priority-only');
 const filtersToggle = document.getElementById('filters-toggle');
 const filtersPanel = document.getElementById('filters-panel');
 const filtersCount = document.getElementById('filters-count');
 const sortHeaders = document.querySelectorAll('.list-header .sortable');
-const newShipmentButton = document.getElementById('btn-new-shipment');
-const resetDataButton = document.getElementById('btn-reset-data');
 
 let allShipments = [];
 const filters = { status: 'ALL', carrier: 'ALL', priorityOnly: false };
@@ -30,7 +28,7 @@ async function loadDashboardData() {
         hideNetworkState();
         renderShipments();
     } catch (error) {
-        showError('Unable to connect to the server. Please check if the backend is running.', loadDashboardData);
+        showError('Unable to connect to the server. Please check if the backend is running.');
     }
 }
 
@@ -133,55 +131,72 @@ async function handleReset() {
     await loadDashboardData();
 }
 
-function bindDashboardEvents() {
-    shipmentsList.addEventListener('click', (e) => {
-        const card = e.target.closest('.shipment-card');
-        if (!card) return;
+function toggleFiltersPanel() {
+    const expanded = filtersPanel.classList.toggle('open');
+    filtersToggle.setAttribute('aria-expanded', String(expanded));
+}
 
-        const shipment = allShipments.find(s => String(s.id) === card.dataset.id);
-        if (shipment) openShipmentDetails(shipment);
-    });
+function sortBy(column) {
+    if (currentSort.column === column) {
+        currentSort.ascending = !currentSort.ascending;
+    } else {
+        currentSort = { column, ascending: true };
+    }
+    updateSortHeaders();
+    renderShipments();
+}
 
-    initDropdowns(filterDropdowns, (key, value) => {
-        filters[key] = value;
-        updateFiltersCount();
-        renderShipments();
-    });
+function openCardDetails(card) {
+    const shipment = allShipments.find(s => String(s.id) === card.dataset.id);
+    if (shipment) openShipmentDetails(shipment);
+}
 
-    priorityOnlyCheckbox.addEventListener('change', (e) => {
-        filters.priorityOnly = e.target.checked;
-        updateFiltersCount();
-        renderShipments();
-    });
+function handleMainClick(e) {
+    const actionElement = e.target.closest('[data-action]');
+    if (actionElement) {
+        switch (actionElement.dataset.action) {
+            case 'toggle-filters': toggleFiltersPanel(); break;
+            case 'new-shipment': openShipmentForm(); break;
+            case 'reset-data': openResetConfirm(); break;
+            case 'retry': loadDashboardData(); break;
+        }
+        return;
+    }
 
-    filtersToggle.addEventListener('click', () => {
-        const expanded = filtersPanel.classList.toggle('open');
-        filtersToggle.setAttribute('aria-expanded', String(expanded));
-    });
+    const sortHeader = e.target.closest('.list-header .sortable');
+    if (sortHeader) {
+        sortBy(sortHeader.dataset.sort);
+        return;
+    }
 
-    searchInput.addEventListener('input', (e) => {
+    const card = e.target.closest('.shipment-card');
+    if (card) openCardDetails(card);
+}
+
+function handleMainInput(e) {
+    if (e.target === searchInput) {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => {
-            currentSearch = e.target.value.trim();
+            currentSearch = searchInput.value.trim();
             renderShipments();
         }, 300);
-    });
+    } else if (e.target === priorityOnlyCheckbox) {
+        filters.priorityOnly = priorityOnlyCheckbox.checked;
+        updateFiltersCount();
+        renderShipments();
+    }
+}
 
-    sortHeaders.forEach(header => {
-        header.addEventListener('click', () => {
-            const column = header.dataset.sort;
-            if (currentSort.column === column) {
-                currentSort.ascending = !currentSort.ascending;
-            } else {
-                currentSort = { column, ascending: true };
-            }
-            updateSortHeaders();
-            renderShipments();
-        });
-    });
+function handleFilterChange(key, value) {
+    filters[key] = value;
+    updateFiltersCount();
+    renderShipments();
+}
 
-    newShipmentButton.addEventListener('click', () => openShipmentForm());
-    resetDataButton.addEventListener('click', openResetConfirm);
+function bindDashboardEvents() {
+    appMain.addEventListener('click', handleMainClick);
+    appMain.addEventListener('input', handleMainInput);
+    initDropdowns(handleFilterChange);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

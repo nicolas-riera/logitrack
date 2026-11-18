@@ -3,22 +3,51 @@ import { formatDate, formatStatus, statusClass, escapeHtml, toDateInputValue, fr
 const shipmentDialog = document.getElementById('shipment-dialog');
 const dialogTitle = document.getElementById('dialog-title');
 const dialogBody = document.getElementById('dialog-body');
-const dialogClose = document.getElementById('dialog-close');
 const formTemplate = document.getElementById('shipment-form-template');
 
 let handlers = {};
+let currentShipment = null;
+let currentView = null;
 
 export function initShipmentModal({ onCreate, onUpdate, onReset }) {
     handlers = { onCreate, onUpdate, onReset };
 
-    dialogClose.addEventListener('click', closeDialog);
-
     shipmentDialog.addEventListener('click', (e) => {
-        if (e.target === shipmentDialog) closeDialog();
+        if (e.target === shipmentDialog) {
+            closeDialog();
+            return;
+        }
+
+        const action = e.target.closest('[data-action]')?.dataset.action;
+
+        switch (action) {
+            case 'close':
+                closeDialog();
+                break;
+            case 'edit':
+                openShipmentForm(currentShipment);
+                break;
+            case 'cancel':
+                if (currentView === 'form' && currentShipment) openShipmentDetails(currentShipment);
+                else closeDialog();
+                break;
+            case 'confirm-reset':
+                confirmReset(e.target.closest('.dialog-body'));
+                break;
+        }
+    });
+
+    shipmentDialog.addEventListener('submit', (e) => {
+        const form = e.target.closest('.shipment-form');
+        if (!form) return;
+        e.preventDefault();
+        submitShipmentForm(form);
     });
 }
 
-function openDialog(title, content) {
+function openDialog(view, shipment, title, content) {
+    currentView = view;
+    currentShipment = shipment;
     dialogTitle.textContent = title;
     dialogBody.replaceChildren(content);
     if (!shipmentDialog.open) shipmentDialog.showModal();
@@ -88,9 +117,7 @@ export function openShipmentDetails(shipment) {
         </div>
     `;
 
-    content.querySelector('[data-action="edit"]').addEventListener('click', () => openShipmentForm(shipment));
-
-    openDialog('Shipment Details', content);
+    openDialog('details', shipment, 'Shipment Details', content);
 }
 
 export function openShipmentForm(shipment = null) {
@@ -111,52 +138,48 @@ export function openShipmentForm(shipment = null) {
         form.querySelector('[data-action="submit"]').textContent = 'Create Shipment';
     }
 
-    form.querySelector('[data-action="cancel"]').addEventListener('click', () => {
-        if (isEdit) openShipmentDetails(shipment);
-        else closeDialog();
-    });
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const invalidField = [...fields].find(field => field.required && !field.value.trim());
-        if (invalidField) {
-            showError(form, 'Recipient, destination city and carrier are required.');
-            invalidField.focus();
-            return;
-        }
-
-        const payload = {
-            recipient: fields.recipient.value.trim(),
-            destinationCity: fields.destinationCity.value.trim(),
-            carrier: fields.carrier.value,
-            status: fields.status.value,
-            isPriority: fields.isPriority.checked,
-            internalNotes: fields.internalNotes.value.trim()
-        };
-
-        const estimatedDelivery = fromDateInputValue(fields.estimatedDelivery.value);
-        if (estimatedDelivery) payload.estimatedDelivery = estimatedDelivery;
-
-        showError(form, null);
-        setBusy(form, true);
-
-        try {
-            if (isEdit) {
-                const updated = await handlers.onUpdate(shipment.id, payload);
-                openShipmentDetails(updated);
-            } else {
-                await handlers.onCreate(payload);
-                closeDialog();
-            }
-        } catch (error) {
-            setBusy(form, false);
-            showError(form, error.message);
-        }
-    });
-
-    openDialog(isEdit ? 'Edit Shipment' : 'New Shipment', form);
+    openDialog('form', shipment, isEdit ? 'Edit Shipment' : 'New Shipment', form);
     fields.recipient.focus();
+}
+
+async function submitShipmentForm(form) {
+    const fields = form.elements;
+    const shipment = currentShipment;
+
+    const invalidField = [...fields].find(field => field.required && !field.value.trim());
+    if (invalidField) {
+        showError(form, 'Recipient, destination city and carrier are required.');
+        invalidField.focus();
+        return;
+    }
+
+    const payload = {
+        recipient: fields.recipient.value.trim(),
+        destinationCity: fields.destinationCity.value.trim(),
+        carrier: fields.carrier.value,
+        status: fields.status.value,
+        isPriority: fields.isPriority.checked,
+        internalNotes: fields.internalNotes.value.trim()
+    };
+
+    const estimatedDelivery = fromDateInputValue(fields.estimatedDelivery.value);
+    if (estimatedDelivery) payload.estimatedDelivery = estimatedDelivery;
+
+    showError(form, null);
+    setBusy(form, true);
+
+    try {
+        if (shipment) {
+            const updated = await handlers.onUpdate(shipment.id, payload);
+            openShipmentDetails(updated);
+        } else {
+            await handlers.onCreate(payload);
+            closeDialog();
+        }
+    } catch (error) {
+        setBusy(form, false);
+        showError(form, error.message);
+    }
 }
 
 export function openResetConfirm() {
@@ -167,23 +190,21 @@ export function openResetConfirm() {
         <p class="form-error" hidden></p>
         <div class="dialog-actions">
             <button type="button" class="btn-secondary" data-action="cancel">Cancel</button>
-            <button type="button" class="btn-danger" data-action="confirm">Reset Data</button>
+            <button type="button" class="btn-danger" data-action="confirm-reset">Reset Data</button>
         </div>
     `;
 
-    content.querySelector('[data-action="cancel"]').addEventListener('click', closeDialog);
+    openDialog('reset', null, 'Reset Data', content);
+}
 
-    content.querySelector('[data-action="confirm"]').addEventListener('click', async () => {
-        showError(content, null);
-        setBusy(content, true);
-        try {
-            await handlers.onReset();
-            closeDialog();
-        } catch (error) {
-            setBusy(content, false);
-            showError(content, error.message);
-        }
-    });
-
-    openDialog('Reset Data', content);
+async function confirmReset(container) {
+    showError(container, null);
+    setBusy(container, true);
+    try {
+        await handlers.onReset();
+        closeDialog();
+    } catch (error) {
+        setBusy(container, false);
+        showError(container, error.message);
+    }
 }

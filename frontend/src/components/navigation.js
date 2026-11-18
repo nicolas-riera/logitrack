@@ -9,16 +9,12 @@ export function initNavigation() {
         mobileNavToggle.setAttribute('aria-expanded', String(expanded));
     };
 
-    mobileNavToggle.addEventListener('click', () => {
-        setExpanded(!appSidebar.classList.contains('expanded'));
-    });
-
-    appSidebar.addEventListener('click', (e) => {
-        if (e.target.closest('#nav-list a')) setExpanded(false);
-    });
-
     document.addEventListener('click', (e) => {
-        if (!appSidebar.contains(e.target)) setExpanded(false);
+        if (e.target.closest('#mobile-nav-toggle')) {
+            setExpanded(!appSidebar.classList.contains('expanded'));
+        } else if (e.target.closest('#nav-list a') || !appSidebar.contains(e.target)) {
+            setExpanded(false);
+        }
     });
 
     document.addEventListener('keydown', (e) => {

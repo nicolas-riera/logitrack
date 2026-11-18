@@ -11,18 +11,15 @@ export function showLoading(containerToClear) {
     }
 }
 
-export function showError(message, onRetry) {
+export function showError(message) {
     networkState.className = 'network-state error';
     networkState.innerHTML = `
         <p class="error-message">${message}</p>
-        <button id="retry-btn" class="btn-primary">Retry</button>
+        <button type="button" class="btn-primary" data-action="retry">Retry</button>
     `;
-    if (onRetry) {
-        document.getElementById('retry-btn').addEventListener('click', onRetry);
-    }
 }
 
 export function hideNetworkState() {
     networkState.className = 'network-state hidden';
     networkState.innerHTML = '';
-}   
+}

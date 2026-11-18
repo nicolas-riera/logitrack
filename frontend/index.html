@@ -36,14 +36,14 @@
                 <div class="search-box">
                     <input type="search" id="search-input" placeholder="Search" aria-label="Search shipment">
                 </div>
-                <button id="filters-toggle" class="filters-toggle" aria-expanded="false" aria-controls="filters-panel">
+                <button id="filters-toggle" class="filters-toggle" data-action="toggle-filters" aria-expanded="false" aria-controls="filters-panel">
                     <span>Filters</span>
                     <span id="filters-count" class="filters-count" hidden></span>
                     <span class="chevron" aria-hidden="true">▾</span>
                 </button>
                 <div class="toolbar-actions">
-                    <button id="btn-reset-data" class="btn-secondary">Reset Data</button>
-                    <button id="btn-new-shipment" class="btn-primary">+ New Shipment</button>
+                    <button id="btn-reset-data" class="btn-secondary" data-action="reset-data">Reset Data</button>
+                    <button id="btn-new-shipment" class="btn-primary" data-action="new-shipment">+ New Shipment</button>
                 </div>
             </div>
 
@@ -106,7 +106,7 @@
         <div class="dialog-content">
             <header class="dialog-header">
                 <h2 id="dialog-title"></h2>
-                <button type="button" class="btn-close" id="dialog-close" aria-label="Close">✕</button>
+                <button type="button" class="btn-close" data-action="close" aria-label="Close">✕</button>
             </header>
             <div id="dialog-body" class="dialog-body"></div>
         </div>
