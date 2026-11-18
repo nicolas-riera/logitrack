@@ -1,7 +1,7 @@
 import { formatDate, formatStatus, statusClass } from './core/utils.js';
 import { getShipments, createShipment, updateShipment, resetShipments } from './api/shipmentsApi.js';
-import { initNavigation } from './components/navigation.js';
-import { initDropdowns } from './components/dropdown.js';
+import { initNavigation, closeNavigation } from './components/navigation.js';
+import { initDropdowns, handleDropdownClick, closeDropdowns, setDropdownValue } from './components/dropdown.js';
 import { initShipmentModal, openShipmentDetails, openShipmentForm, openResetConfirm } from './components/shipmentModal.js';
 import { showLoading, showError, hideNetworkState } from './components/networkState.js';
 
@@ -14,6 +14,8 @@ const filtersToggle = document.getElementById('filters-toggle');
 const filtersPanel = document.getElementById('filters-panel');
 const filtersCount = document.getElementById('filters-count');
 const sortHeaders = document.querySelectorAll('.list-header .sortable');
+
+const FILTERS_STORAGE_KEY = 'logitrack.filters';
 
 let allShipments = [];
 const filters = { status: 'ALL', carrier: 'ALL', priorityOnly: false };
@@ -98,6 +100,43 @@ function renderShipments() {
     shipmentsList.appendChild(fragment);
 }
 
+function saveFilters() {
+    try {
+        localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+    } catch (error) {
+        console.warn('Unable to save filters', error);
+    }
+}
+
+function readSavedFilters() {
+    try {
+        return JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY));
+    } catch {
+        return null;
+    }
+}
+
+function restoreFilters() {
+    const saved = readSavedFilters();
+    if (!saved || typeof saved !== 'object') return;
+
+    ['status', 'carrier'].forEach(key => {
+        if (typeof saved[key] === 'string' && setDropdownValue(key, saved[key])) {
+            filters[key] = saved[key];
+        }
+    });
+
+    filters.priorityOnly = saved.priorityOnly === true;
+    priorityOnlyCheckbox.checked = filters.priorityOnly;
+    updateFiltersCount();
+}
+
+function applyFilters() {
+    saveFilters();
+    updateFiltersCount();
+    renderShipments();
+}
+
 function updateFiltersCount() {
     const activeCount = [filters.status !== 'ALL', filters.carrier !== 'ALL', filters.priorityOnly].filter(Boolean).length;
     filtersCount.textContent = activeCount;
@@ -152,6 +191,10 @@ function openCardDetails(card) {
 }
 
 function handleMainClick(e) {
+    e.stopPropagation();
+    closeNavigation();
+    if (handleDropdownClick(e)) return;
+
     const actionElement = e.target.closest('[data-action]');
     if (actionElement) {
         switch (actionElement.dataset.action) {
@@ -174,6 +217,8 @@ function handleMainClick(e) {
 }
 
 function handleMainInput(e) {
+    e.stopPropagation();
+
     if (e.target === searchInput) {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => {
@@ -182,20 +227,27 @@ function handleMainInput(e) {
         }, 300);
     } else if (e.target === priorityOnlyCheckbox) {
         filters.priorityOnly = priorityOnlyCheckbox.checked;
-        updateFiltersCount();
-        renderShipments();
+        applyFilters();
     }
 }
 
 function handleFilterChange(key, value) {
     filters[key] = value;
-    updateFiltersCount();
-    renderShipments();
+    applyFilters();
+}
+
+function closeMenus() {
+    closeDropdowns();
+    closeNavigation();
 }
 
 function bindDashboardEvents() {
     appMain.addEventListener('click', handleMainClick);
     appMain.addEventListener('input', handleMainInput);
+    document.addEventListener('click', closeMenus);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenus();
+    });
     initDropdowns(handleFilterChange);
 }
 
@@ -203,5 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initShipmentModal({ onCreate: handleCreate, onUpdate: handleUpdate, onReset: handleReset });
     bindDashboardEvents();
+    restoreFilters();
     loadDashboardData();
 });

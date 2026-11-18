@@ -1,4 +1,10 @@
-function closeAll(except = null) {
+let onChangeHandler = () => {};
+
+export function initDropdowns(onChange) {
+    onChangeHandler = onChange;
+}
+
+export function closeDropdowns(except = null) {
     document.querySelectorAll('.dropdown.open').forEach(dropdown => {
         if (dropdown === except) return;
         dropdown.classList.remove('open');
@@ -17,33 +23,36 @@ function selectOption(dropdown, option) {
     dropdown.classList.toggle('has-value', option.dataset.value !== 'ALL');
 }
 
-export function initDropdowns(onChange) {
-    document.addEventListener('click', (e) => {
-        const dropdown = e.target.closest('.dropdown');
-        if (!dropdown) {
-            closeAll();
-            return;
-        }
+export function setDropdownValue(filterName, value) {
+    const dropdown = document.querySelector(`.dropdown[data-filter="${filterName}"]`);
+    const option = [...(dropdown?.querySelectorAll('.dropdown-option') ?? [])].find(opt => opt.dataset.value === value);
+    if (!option) return false;
+    selectOption(dropdown, option);
+    return true;
+}
 
-        const toggle = e.target.closest('.dropdown-toggle');
-        if (toggle) {
-            const open = !dropdown.classList.contains('open');
-            closeAll(dropdown);
-            dropdown.classList.toggle('open', open);
-            toggle.setAttribute('aria-expanded', String(open));
-            return;
-        }
+export function handleDropdownClick(e) {
+    const dropdown = e.target.closest('.dropdown');
+    if (!dropdown) {
+        closeDropdowns();
+        return false;
+    }
 
-        const option = e.target.closest('.dropdown-option');
-        if (option) {
-            selectOption(dropdown, option);
-            closeAll();
-            dropdown.querySelector('.dropdown-toggle').focus();
-            onChange(dropdown.dataset.filter, option.dataset.value);
-        }
-    });
+    const toggle = e.target.closest('.dropdown-toggle');
+    if (toggle) {
+        const open = !dropdown.classList.contains('open');
+        closeDropdowns(dropdown);
+        dropdown.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        return true;
+    }
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeAll();
-    });
+    const option = e.target.closest('.dropdown-option');
+    if (option) {
+        selectOption(dropdown, option);
+        closeDropdowns();
+        dropdown.querySelector('.dropdown-toggle').focus();
+        onChangeHandler(dropdown.dataset.filter, option.dataset.value);
+    }
+    return true;
 }

@@ -13,6 +13,8 @@ export function initShipmentModal({ onCreate, onUpdate, onReset }) {
     handlers = { onCreate, onUpdate, onReset };
 
     shipmentDialog.addEventListener('click', (e) => {
+        e.stopPropagation();
+
         if (e.target === shipmentDialog) {
             closeDialog();
             return;
@@ -38,6 +40,7 @@ export function initShipmentModal({ onCreate, onUpdate, onReset }) {
     });
 
     shipmentDialog.addEventListener('submit', (e) => {
+        e.stopPropagation();
         const form = e.target.closest('.shipment-form');
         if (!form) return;
         e.preventDefault();
