@@ -33,27 +33,23 @@ logitrack/
 
 ### Prerequisites
 
-- Node.js (v18+ recommended) installed on your machine.
+- Python (3.10+ recommended) and `pip` installed on your machine.
 - A modern web browser (Chrome, Firefox, Edge, Safari).
 
 ### 1. Backend Setup
 
-Navigate to the backend directory (or clone the official repository if not already present) and start the local API server:
+Navigate to the project root directory (`logitrack`), install the dependencies, and start the local API server on port `3000`:
 
 ```bash
-git clone https://github.com/PlateformeProjects/logitrack_backend.git
+cd logitrack
 ```` 
 
 ```bash
-cd logitrack_backend
+pip install "fastapi[standard]"
 ```
 
 ```bash
-npm install
-```
-
-```bash
-npm start
+fastapi dev custom_backend/main.py --host 0.0.0.0 --port 3000
 ```
 
 ### 2. Frontend Setup
