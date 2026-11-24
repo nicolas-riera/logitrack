@@ -2,7 +2,6 @@ import uuid
 from custom_backend.models.shipment import Shipment, ShipmentCreate, ShipmentUpdate, StatusType
 from custom_backend.repository.shipment_repository import ShipmentRepository
 
-
 class ShipmentService:
     def __init__(self, repository: ShipmentRepository) -> None:
         self.repository = repository

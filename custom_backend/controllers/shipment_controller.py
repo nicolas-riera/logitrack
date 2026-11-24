@@ -5,10 +5,8 @@ from custom_backend.services.shipment_service import ShipmentService
 
 router = APIRouter(prefix="/api/v1", tags=["Shipments"])
 
-
 def get_shipment_service() -> ShipmentService:
     return ShipmentService(ShipmentRepository())
-
 
 @router.get("/shipments")
 def get_shipments(
@@ -22,7 +20,6 @@ def get_shipments(
         "total": len(data),
         "data": [item.model_dump() for item in data],
     }
-
 
 @router.get("/shipments/{shipment_id}")
 def get_shipment(
@@ -43,7 +40,6 @@ def get_shipment(
         "data": item.model_dump(),
     }
 
-
 @router.post("/shipments", status_code=status.HTTP_201_CREATED)
 def create_shipment(
     payload: ShipmentCreate,
@@ -55,7 +51,6 @@ def create_shipment(
         "message": "Shipment created successfully.",
         "data": created.model_dump(),
     }
-
 
 @router.put("/shipments/{shipment_id}")
 def update_shipment(
@@ -77,7 +72,6 @@ def update_shipment(
         "message": "Shipment updated successfully.",
         "data": updated.model_dump(),
     }
-
 
 @router.delete("/shipments/{shipment_id}")
 def delete_shipment(
@@ -103,7 +97,6 @@ def delete_shipment(
             "destinationCity": deleted.destinationCity,
         },
     }
-
 
 @router.post("/reset")
 def reset_shipments(service: ShipmentService = Depends(get_shipment_service)):

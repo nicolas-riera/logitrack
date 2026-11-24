@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 from custom_backend.models.shipment import Shipment
 
-
 class ShipmentRepository:
     def __init__(
         self,

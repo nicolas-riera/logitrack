@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 CarrierType = Literal["DHL", "Chronopost", "FedEx", "UPS"]
 StatusType = Literal["IN_TRANSIT", "DELIVERED", "DELAYED", "PENDING"]
 
-
 class Shipment(BaseModel):
     id: str
     trackingNumber: str
@@ -18,7 +17,6 @@ class Shipment(BaseModel):
     estimatedDelivery: str | None = None
     isPriority: bool = False
     internalNotes: str = ""
-
 
 class ShipmentCreate(BaseModel):
     trackingNumber: str | None = None
@@ -48,7 +46,6 @@ class ShipmentCreate(BaseModel):
             isPriority=self.isPriority,
             internalNotes=self.internalNotes,
         )
-
 
 class ShipmentUpdate(BaseModel):
     trackingNumber: str | None = None
